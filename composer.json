@@ -1,0 +1,23 @@
+{
+    "name": "augwa/didww-php-sdk",
+    "description": "DIDWW PHP SDK",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jonathan Dahan",
+            "email": "jonathan@augwa.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "ext-soap": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Augwa\\": "src/"
+        }
+    }
+}
+
+
