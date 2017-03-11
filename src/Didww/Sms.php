@@ -3,10 +3,10 @@
 namespace Augwa\Didww;
 
 /**
- * Class PstnTraffic
+ * Class Sms
  * @package Augwa\Didww
  */
-class PstnTraffic
+class Sms
     extends AbstractObject
 {
 
@@ -15,18 +15,16 @@ class PstnTraffic
      *
      * @return array
      */
-    public function get(
+    public function getLog(
         array $data = array()
     )
     {
         return $this->api(
-            'didww_pstn_traffic',
+            'didww_getsmslog',
             $data,
             array(
-                'from_date',
-                'to_date'
+
             )
         );
     }
-
 }

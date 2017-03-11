@@ -10,4 +10,22 @@ class PstnNumber
     extends AbstractObject
 {
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function check(
+        array $data = array()
+    )
+    {
+        return $this->api(
+            'didww_checkpstnnumber',
+            $data,
+            array(
+                'pstn_number'
+            )
+        );
+    }
+
 }

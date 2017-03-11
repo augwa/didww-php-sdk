@@ -10,18 +10,12 @@ class Regions
     extends AbstractObject
 {
 
-    protected $allowed = array(
-        'country_iso',
-        'city_prefix',
-        'last_request_gmt'
-    );
-
     /**
      * @param array $data
      *
      * @return array
      */
-    public function getRegions(
+    public function get(
         array $data = array()
     )
     {

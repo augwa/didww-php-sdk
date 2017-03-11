@@ -17,6 +17,7 @@ class Didww
     /** @var \SoapClient */
     private $client;
 
+    /** @var int */
     private $connectionTimeout = 5;
 
     /**
@@ -84,6 +85,43 @@ class Didww
     }
 
     /**
+     * @return int
+     */
+    public function getConnectionTimeout()
+    {
+        return $this->connectionTimeout;
+    }
+
+    /**
+     * @param int $connectionTimeout
+     *
+     * @return Didww
+     */
+    public function setConnectionTimeout(
+        $connectionTimeout
+    )
+    {
+        $this->connectionTimeout = (int)max(0,$connectionTimeout);
+        $this->setClient();
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getAuthString()
+    {
+        return sha1(
+            sprintf(
+                '%s%s%s',
+                $this->getApiUsername(),
+                $this->getApiKey(),
+                $this->isTestMode() ? 'sandbox' : ''
+            )
+        );
+    }
+
+    /**
      * @return \SoapClient
      */
     protected function getClient()
@@ -96,7 +134,8 @@ class Didww
             $this->client = new \SoapClient(
                 $endpoint,
                 array(
-                    'connection_timeout' => 5
+                    'connection_timeout' => $this->getConnectionTimeout(),
+                    'soap_version' => \SOAP_1_1
                 )
             );
         }
@@ -145,148 +184,409 @@ class Didww
         array $data = array()
     )
     {
-        $regions = new Didww\Regions($this->getClient());
-        return $regions->getRegions($data);
+        $regions = new Didww\Regions(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $regions->get(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getPstnRates(
         array $data = array()
     )
     {
-
+        $pstnRates = new Didww\PstnRates(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $pstnRates->get(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function updatePstnRates(
         array $data = array()
     )
     {
-
+        $pstnRates = new Didww\PstnRates(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $pstnRates->update(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function checkPstnNumber(
         array $data = array()
     )
     {
-
+        $pstnNumber = new Didww\PstnNumber(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $pstnNumber->check(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function orderCreate(
         array $data = array()
     )
     {
-
+        $order = new Didww\Order(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $order->create(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function orderCancel(
         array $data = array()
     )
     {
-
+        $order = new Didww\Order(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $order->cancel(
+            $data
+        );
     }
 
-    public function orderAutoRenew(
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function orderRenew(
         array $data = array()
     )
     {
-
+        $order = new Didww\Order(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $order->renew(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function updateMapping(
         array $data = array()
     )
     {
-
+        $mapping = new Didww\Mapping(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $mapping->update(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getPrepaidBalance(
         array $data = array()
     )
     {
-
+        $prepaidBalance = new Didww\PrepaidBalance(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $prepaidBalance->get(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function updatePrepaidBalance(
         array $data = array()
     )
     {
-
+        $prepaidBalance = new Didww\PrepaidBalance(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $prepaidBalance->update(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function restoreDidNumber(
         array $data = array()
     )
     {
-
+        $didNumber = new Didww\DidNumber(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $didNumber->restore(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getApiDetails(
         array $data = array()
     )
     {
-
+        $api = new Didww\Api(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $api->getDetails(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getServiceDetails(
         array $data = array()
     )
     {
-
+        $service = new Didww\Service(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $service->getDetails(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getCdrLog(
         array $data = array()
     )
     {
-
+        $cdr = new Didww\Cdr(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $cdr->getLog(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getCallHistoryInvoices(
         array $data = array()
     )
     {
-
+        $callHistory = new Didww\CallHistory(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $callHistory->getInvoices(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getPrepaidBalanceList(
         array $data = array()
     )
     {
-
+        $prepaidBalance = new Didww\PrepaidBalance(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $prepaidBalance->getList(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getAutoRenewOrderStatus(
         array $data = array()
     )
     {
-
+        $order = new Didww\Order(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $order->getAutoRenewStatus(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getPstnTraffic(
         array $data = array()
     )
     {
-
+        $pstnTaffic = new Didww\PstnTraffic(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $pstnTaffic->get(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getCountries(
         array $data = array()
     )
     {
-
+        $countries = new Didww\Countries(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $countries->get(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getCities(
         array $data = array()
     )
     {
-
+        $cities = new Didww\Cities(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $cities->get(
+            $data
+        );
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     public function getServiceList(
         array $data = array()
     )
     {
+        $service = new Didww\Service(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $service->getList(
+            $data
+        );
+    }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function getCoverage(
+        array $data = array()
+    )
+    {
+        $coverage = new Didww\Coverage(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $coverage->get(
+            $data
+        );
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    public function getSmsLog(
+        array $data = array()
+    )
+    {
+        $sms = new Didww\Sms(
+            $this->getClient(),
+            $this->getAuthString()
+        );
+        return $sms->getLog(
+            $data
+        );
     }
 
 }

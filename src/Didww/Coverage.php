@@ -3,10 +3,10 @@
 namespace Augwa\Didww;
 
 /**
- * Class PstnTraffic
+ * Class Coverage
  * @package Augwa\Didww
  */
-class PstnTraffic
+class Coverage
     extends AbstractObject
 {
 
@@ -20,11 +20,10 @@ class PstnTraffic
     )
     {
         return $this->api(
-            'didww_pstn_traffic',
+            'didww_getcoverage',
             $data,
             array(
-                'from_date',
-                'to_date'
+
             )
         );
     }

@@ -15,16 +15,10 @@ class AbstractObject
     /** @var string */
     private $authString;
 
-    /** @var array */
-    protected $required = array();
-
-    /** @var array */
-    protected $allowed = array();
-
     /**
      * @return \SoapClient
      */
-    protected function getClient()
+    private function getClient()
     {
         return $this->client;
     }
@@ -34,7 +28,7 @@ class AbstractObject
      *
      * @return AbstractObject
      */
-    protected function setClient(
+    private function setClient(
         $client
     )
     {
@@ -45,7 +39,7 @@ class AbstractObject
     /**
      * @return string
      */
-    protected function getAuthString()
+    private function getAuthString()
     {
         return $this->authString;
     }
@@ -55,7 +49,7 @@ class AbstractObject
      *
      * @return AbstractObject
      */
-    protected function setAuthString(
+    private function setAuthString(
         $authString
     )
     {
@@ -64,116 +58,120 @@ class AbstractObject
     }
 
     /**
-     * @return array
-     */
-    public function getRequired()
-    {
-        return $this->required;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllowed()
-    {
-        return $this->allowed;
-    }
-
-    /**
      * AbstractObject constructor.
      *
      * @param \SoapClient $client
+     * @param string $authString
      */
     public function __construct(
-        \SoapClient $client
+        \SoapClient $client,
+        $authString
     )
     {
         $this->setClient($client);
+        $this->setAuthString($authString);
     }
 
     /**
      * @param $method
      * @param array $data
+     * @param array $required
      *
      * @return array
      * @throws Exception\RequiredFieldException
      */
     protected function api(
         $method,
-        array $data = array()
+        array $data = array(),
+        array $required = array()
     )
     {
-        $diff = array_diff_key(array_flip($this->required), $data);
+        $diff = array_diff_key(array_flip($required), $data);
         if (sizeof($diff) > 0) {
             throw new Exception\RequiredFieldException(
                 sprintf(
                     'Required data missing: %s',
                     implode(', ', $diff)
-                )
-            );
-        }
-
-        $diff = array_diff_key(
-            $data,
-            array_flip(
-                array_merge(
-                    $this->allowed,
-                    $this->required
-                )
-            )
-        );
-
-        if (sizeof($diff)) {
-            trigger_error(
-                sprintf(
-                    'Discarded unknown keys: %s',
-                    implode(', ', $diff)
-                ),
-                E_USER_NOTICE
+               )
             );
         }
 
         $data = array_merge(
-            array_intersect_key(array_flip($this->required), $data),
+            $data,
             array(
-                'auth_string' => $this->authString
+                'auth_string' => $this->getAuthString(),
             )
         );
 
-        $responseNode = sprintf('%sResult', $method);
-        $xmlResponse = $this->getClient()->$method($data)->$responseNode;
-        $arr = array();
-
-        return $this->array_flat(
-            json_decode(
-                json_encode(
-                    (array) simplexml_load_string($xmlResponse)
-                ),
-                true
-            ),
-            $arr
+        $response = $this->getClient()->__soapCall(
+            $method,
+            $this->reOrderData($method, $data)
         );
+
+        return $response;
     }
 
     /**
-     * @param array $complexArray
-     * @param array $flatArray
+     * @param string $method
+     * @param array $data
      *
      * @return array
+     * @throws Exception\SaveFileException
      */
-    private function array_flat(
-        array $complexArray,
-        array &$flatArray
+    private function reOrderData(
+        $method,
+        array $data
     )
     {
-        foreach ($complexArray as $key => $value) {
-            if (is_array($value)) {
-                $flatArray = array_merge($flatArray, $this->array_flat($value, $flatArray));
+        $requestXsd = __DIR__ . '/../../resources/didww.xsd';
+        $this->cacheWsdl($requestXsd);
+
+        $xml = new \DOMDocument();
+        $xml->load($requestXsd);
+        $xpath = new \DOMXPath($xml);
+
+        $elements = array();
+
+        $result = $xpath->query(sprintf('/wsdl:definitions/wsdl:message[@name="%sRequest"]/wsdl:part', $method));
+        /** @var $element_node \DOMElement  */
+        foreach($result as $element_node) {
+            $elements[] = $element_node->getAttribute('name');
+        }
+
+        $newData = array();
+
+        foreach($elements as $element) {
+            if (array_key_exists($element, $data)) {
+                $newData[$element] = $data[$element];
             } else {
-                $flatArray[$key] = trim($value);
+                $newData[$element] = null;
             }
         }
 
-        return $flatArray;
+        return $newData;
     }
+
+    /**
+     * @param $fileName
+     *
+     * @throws Exception\SaveFileException
+     */
+    private function cacheWsdl(
+        $fileName
+    )
+    {
+
+        if (false === file_exists($fileName)) {
+            if (false === file_put_contents(
+                    $fileName,
+                    file_get_contents('http://api.didww.com/api2/?wsdl')
+                )
+            ) {
+                throw new Exception\SaveFileException(
+                    'Unable to download and save didww wsdl'
+                );
+            }
+        }
+    }
+
 }
