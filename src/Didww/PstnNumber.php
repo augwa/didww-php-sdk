@@ -11,7 +11,11 @@ class PstnNumber
 {
 
     /**
+     * This method will validate a PSTN Number.
+     *
      * @param array $data
+     *
+     * @internal string $data[pstn_number]                 PSTN number
      *
      * @return array
      */

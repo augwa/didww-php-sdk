@@ -178,6 +178,11 @@ class Didww
      *
      * @param array $data
      *
+     * @internal string $data[country_iso]                 Country ISO Code
+     * @internal string $data[city_prefix]                 City Prefix
+     * @internal string $data[last_request_gmt]            Date in UNIXTIME GMT format. Get list of updated regions starting from date of the last request
+     * @internal string $data[city_id]                     City ID
+     *
      * @return array
      */
     public function getRegions(
@@ -194,7 +199,14 @@ class Didww
     }
 
     /**
+     * This method will return list of regions from DIDWW coverage list.
+     *
      * @param array $data
+     *
+     * @internal string $data[country_iso]                 Country ISO Code
+     * @internal string $data[city_prefix]                 City Prefix
+     * @internal string $data[last_request_gmt]            Date in UNIXTIME GMT format. Get list of updated regions starting from date of the last request
+     * @internal string $data[city_id]                     City ID
      *
      * @return array
      */
@@ -212,7 +224,12 @@ class Didww
     }
 
     /**
+     * This method will change PSTN tariffs for resellers through their Staff panel.
+     *
      * @param array $data
+     *
+     * @internal string $data[][network_prefix]            Network Prefix
+     * @internal string $data[][sell_rate]                 Sell Rate
      *
      * @return array
      */
@@ -225,12 +242,18 @@ class Didww
             $this->getAuthString()
         );
         return $pstnRates->update(
-            $data
+            array(
+                'rates' => $data
+            )
         );
     }
 
     /**
+     * This method will validate a PSTN Number.
+     *
      * @param array $data
+     *
+     * @internal string $data[pstn_number]                 PSTN number
      *
      * @return array
      */
@@ -248,7 +271,25 @@ class Didww
     }
 
     /**
+     * This method will purchase new service.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[country_iso]                 Country ISO Code
+     * @internal string $data[city_prefix]                 City Prefix
+     * @internal int    $data[period]                      Period (months)
+     * @internal string $data[map_data][map_type]          Map Type; URI or ITSP
+     * @internal string $data[map_data][map_proto]         Map Proto; SIP, H323 or IAX2
+     * @internal string $data[map_data][map_detail]        Map Detail; ip address, hostname, etc
+     * @internal int    $data[map_data][map_pref_server]   Map Pref Server; 0 – Local Server (automatic detection), 1 – USA Server, 3 – Europe Server
+     * @internal string $data[map_data][map_itsp_id]       Map ITSP ID; Provider ID
+     * @internal string $data[map_data][cli_format]        CLI Format; RAW - Do not alter CLI (default); E164 - Attempt to convert CLI to E.164 format; Local - Attempt to convert CLI to localized format
+     * @internal string $data[map_data][cli_prefix]        CLI Prefix; Can be prefixed with optional '+' sign followed by up to 6 characters including digits and '#'
+     * @internal string $data[prepaid_funds]               Amount in points
+     * @internal string $data[uniq_hash]                   Unique md5 hash (Minimum 32 characters length). If unique hash has already been processed, method returns the information about DID number that was previously created with the same unique hash.
+     * @internal string $data[city_id]                     City ID
+     * @internal int    $data[autorenew_enable]            Enable automatic renewal; 1 - true; 0 - false
      *
      * @return array
      */
@@ -266,7 +307,12 @@ class Didww
     }
 
     /**
+     * This method will cancel order and remove purchased services.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[did_number]                  DID number to cancel
      *
      * @return array
      */
@@ -284,7 +330,14 @@ class Didww
     }
 
     /**
+     * This method will renew active service for specific period.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[did_number]                  DID Number to renew
+     * @internal int    $data[period]                      Month(s) to renew for
+     * @internal string $data[uniq_hash]                   Unique md5 hash (minimum 32 characters length)
      *
      * @return array
      */
@@ -302,7 +355,19 @@ class Didww
     }
 
     /**
+     * This method will change/update forwarding data for DID Number.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]
+     * @internal string $data[did_number]
+     * @internal string $data[map_data][map_type]          Map Type; URI or ITSP
+     * @internal string $data[map_data][map_proto]         Map Proto; SIP, H323 or IAX2
+     * @internal string $data[map_data][map_detail]        Map Detail; ip address, hostname, etc
+     * @internal int    $data[map_data][map_pref_server]   Map Pref Server; 0 – Local Server (automatic detection), 1 – USA Server, 3 – Europe Server
+     * @internal string $data[map_data][map_itsp_id]       Map ITSP ID; Provider ID
+     * @internal string $data[map_data][cli_format]        CLI Format; RAW - Do not alter CLI (default); E164 - Attempt to convert CLI to E.164 format; Local - Attempt to convert CLI to localized format
+     * @internal string $data[map_data][cli_prefix]        CLI Prefix; Can be prefixed with optional '+' sign followed by up to 6 characters including digits and '#'
      *
      * @return array
      */
@@ -320,7 +385,11 @@ class Didww
     }
 
     /**
+     * This method will return current Prepaid Balance of customer.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
      *
      * @return array
      */
@@ -338,7 +407,14 @@ class Didww
     }
 
     /**
+     * This method will update customer's Prepaid Balance. Add/Remove points.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[prepaid_funds]               Amount in points
+     * @internal int    $data[operation_type]              Operation Type; 1 - Add funds (positive amount), 2 - Remove funds (negative amount)
+     * @internal string $data[uniq_hash]                   Unique md5 hash (Minimum 32 characters length)
      *
      * @return array
      */
@@ -356,7 +432,15 @@ class Didww
     }
 
     /**
+     * This method will restore canceled and expired DID number within aging period.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[did_number]                  DID Number to be restored
+     * @internal int    $data[period]                      Period (months)
+     * @internal string $data[uniq_hash]                   Unique md5 hash (Minimum 32 characters length)
+     * @internal int    $data[isrenew]                     Auto Renew; 1 - yes, 0 - no
      *
      * @return array
      */
@@ -374,25 +458,29 @@ class Didww
     }
 
     /**
-     * @param array $data
+     * This method will return configuration settings for reseller.
      *
      * @return array
      */
-    public function getApiDetails(
-        array $data = array()
-    )
+    public function getApiDetails()
     {
         $api = new Didww\Api(
             $this->getClient(),
             $this->getAuthString()
         );
-        return $api->getDetails(
-            $data
-        );
+        return $api->getDetails();
     }
 
     /**
+     * This method will return order details on the API for the component synchronization.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[api_order_id]                Order ID on API
+     * @internal string $data[did_number]                  DID Number
+     *
+     * $data[api_order_id] and $data[did_number] parameters are interchangeable, so query can be done by api_order_id OR did_number
      *
      * @return array
      */
@@ -404,13 +492,39 @@ class Didww
             $this->getClient(),
             $this->getAuthString()
         );
+
+        if (
+            array_key_exists('api_order_id', $data) &&
+            false === array_key_exists('did_number', $data)
+        ) {
+            $data['did_number'] = null;
+        }
+
+        if (
+            array_key_exists('did_number', $data) &&
+            false === array_key_exists('api_order_id', $data)
+        ) {
+            $data['api_order_id'] = null;
+        }
+
         return $service->getDetails(
             $data
         );
     }
 
     /**
+     * This method will return call data records for specified User, DID number, or date period.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[did_number]                  DID Number
+     * @internal string $data[from_date]                   Start date from which call records will be retrieved
+     * @internal string $data[to_date]                     End date date to which call records will be retrieved
+     * @internal string $data[limit]                       Maximum number of call log records to return
+     * @internal string $data[offset]                      The offset of the position
+     * @internal string $data[order]                       Order records by a specific field
+     * @internal string $data[order_Dir]                   Sort rows in ascending or descending order
      *
      * @return array
      */
@@ -428,7 +542,13 @@ class Didww
     }
 
     /**
+     * This method will return data for invoice generation based on CDR.
+     *
      * @param array $data
+     *
+     * @internal int    $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[from_date]                   Start date from which call records will be retrieved
+     * @internal string $data[to_date]                     End date date to which call records will be retrieved
      *
      * @return array
      */
@@ -446,7 +566,11 @@ class Didww
     }
 
     /**
+     * This method will return array of balances of all customers.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
      *
      * @return array
      */
@@ -464,11 +588,17 @@ class Didww
     }
 
     /**
+     * This method will change Auto-renew status of the specified DID number.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[did_number]                  DID Number to renew
+     * @internal int    $data[status]                      Order status; Completed, Pending or Canceled
      *
      * @return array
      */
-    public function getAutoRenewOrderStatus(
+    public function orderToggleAutoRenew(
         array $data = array()
     )
     {
@@ -476,13 +606,18 @@ class Didww
             $this->getClient(),
             $this->getAuthString()
         );
-        return $order->getAutoRenewStatus(
+        return $order->toggleAutoRenew(
             $data
         );
     }
 
     /**
+     * This method will return data for building PSTN Traffic chart, including "Cost", "Sold" and "Duration" values.
+     *
      * @param array $data
+     *
+     * @internal string $data[from_date]                   Start date from which PSTN traffic records will be retrieved
+     * @internal string $data[to_date]                     End date date to which PSTN traffic records will be retrieved
      *
      * @return array
      */
@@ -500,7 +635,11 @@ class Didww
     }
 
     /**
+     * This method will return list of available countries from DIDWW coverage list.
+     *
      * @param array $data
+     *
+     * @internal string $data[country_iso]                 Country ISO Code
      *
      * @return array
      */
@@ -518,7 +657,13 @@ class Didww
     }
 
     /**
+     * This method will return list of cities from DIDWW coverage list.
+     *
      * @param array $data
+     *
+     * @internal string $data[country_iso]                 Country ISO Code
+     * @internal string $data[city_id]                     City ID
+     * @internal int    $data[active]                      Active; 1 - returns cities with available DID numbers, 0 - all cities will be returned
      *
      * @return array
      */
@@ -536,7 +681,11 @@ class Didww
     }
 
     /**
+     * This method will return list of orders for given customer.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
      *
      * @return array
      */
@@ -556,6 +705,10 @@ class Didww
     /**
      * @param array $data
      *
+     * @internal string $data[country_iso]                 Country ISO Code
+     * @internal string $data[city_prefix]                 City Area Prefix
+     * @internal int    $data[city_id]                     City ID
+     *
      * @return array
      */
     public function getCoverage(
@@ -572,7 +725,20 @@ class Didww
     }
 
     /**
+     * This method will return sms data records
+     *
      * @param array $data
+     *
+     * @internal int    $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[from_date]                   Start date from which records will be retrieved
+     * @internal string $data[to_date]                     End date date to which records will be retrieved
+     * @internal string $data[destination]                 Destination number
+     * @internal string $data[source]                      Source number
+     * @internal int    $data[success]                     Success; 1 - true, 0 - false
+     * @internal int    $data[limit]                       Maximum number of sms log records to return
+     * @internal int    $data[offset]                      The offset of the position
+     * @internal string $data[order]                       Order records by a specific field
+     * @internal string $data[order_Dir]                   Sort rows in ascending or descending order
      *
      * @return array
      */

@@ -91,7 +91,7 @@ class AbstractObject
             throw new Exception\RequiredFieldException(
                 sprintf(
                     'Required data missing: %s',
-                    implode(', ', $diff)
+                    implode(', ', array_keys($diff))
                )
             );
         }
@@ -133,9 +133,9 @@ class AbstractObject
         $elements = array();
 
         $result = $xpath->query(sprintf('/wsdl:definitions/wsdl:message[@name="%sRequest"]/wsdl:part', $method));
-        /** @var $element_node \DOMElement  */
-        foreach($result as $element_node) {
-            $elements[] = $element_node->getAttribute('name');
+        /** @var $node \DOMElement  */
+        foreach($result as $node) {
+            $elements[] = $node->getAttribute('name');
         }
 
         $newData = array();
@@ -160,7 +160,6 @@ class AbstractObject
         $fileName
     )
     {
-
         if (false === file_exists($fileName)) {
             if (false === file_put_contents(
                     $fileName,

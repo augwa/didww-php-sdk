@@ -11,7 +11,11 @@ class Countries
 {
 
     /**
+     * This method will return list of available countries from DIDWW coverage list.
+     *
      * @param array $data
+     *
+     * @internal string $data[country_iso]                 Country ISO Code
      *
      * @return array
      */

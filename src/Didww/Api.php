@@ -11,17 +11,14 @@ class Api
 {
 
     /**
-     * @param array $data
+     * This method will return configuration settings for reseller.
      *
      * @return array
      */
-    public function getDetails(
-        array $data = array()
-    )
+    public function getDetails()
     {
         return $this->api(
-            'didww_getdidwwapidetails',
-            $data
+            'didww_getdidwwapidetails'
         );
     }
 

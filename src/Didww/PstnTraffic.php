@@ -11,7 +11,12 @@ class PstnTraffic
 {
 
     /**
+     * This method will return data for building PSTN Traffic chart, including "Cost", "Sold" and "Duration" values.
+     *
      * @param array $data
+     *
+     * @internal string $data[from_date]                   Start date from which PSTN traffic records will be retrieved
+     * @internal string $data[to_date]                     End date date to which PSTN traffic records will be retrieved
      *
      * @return array
      */
@@ -21,11 +26,7 @@ class PstnTraffic
     {
         return $this->api(
             'didww_pstn_traffic',
-            $data,
-            array(
-                'from_date',
-                'to_date'
-            )
+            $data
         );
     }
 

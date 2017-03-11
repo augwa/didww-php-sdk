@@ -11,7 +11,15 @@ class Service
 {
 
     /**
+     * This method will return order details on the API for the component synchronization.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
+     * @internal string $data[api_order_id]                Order ID on API
+     * @internal string $data[did_number]                  DID Number
+     *
+     * $data[api_order_id] and $data[did_number] parameters are interchangeable, so query can be done by api_order_id OR did_number
      *
      * @return array
      */
@@ -31,7 +39,11 @@ class Service
     }
 
     /**
+     * This method will return list of orders for given customer.
+     *
      * @param array $data
+     *
+     * @internal string $data[customer_id]                 Customer ID (from your local database, any digit)
      *
      * @return array
      */
