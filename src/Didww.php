@@ -30,7 +30,7 @@ class Didww
     /**
      * @param string $apiUsername
      *
-     * @return Client
+     * @return Didww
      */
     public function setApiUsername(
         $apiUsername
@@ -51,7 +51,7 @@ class Didww
     /**
      * @param string $apiKey
      *
-     * @return Client
+     * @return Didww
      */
     public function setApiKey(
         $apiKey
@@ -72,7 +72,7 @@ class Didww
     /**
      * @param bool $testMode
      *
-     * @return Client
+     * @return Didww
      */
     public function setTestMode(
         $testMode
@@ -106,7 +106,7 @@ class Didww
     /**
      * @param \SoapClient $client
      *
-     * @return Client
+     * @return Didww
      */
     protected function setClient(
         \SoapClient $client = null
@@ -138,12 +138,15 @@ class Didww
      * This method will return list of regions from DIDWW coverage list.
      *
      * @param array $data
+     *
+     * @return array
      */
     public function getRegions(
         array $data = array()
     )
     {
-
+        $regions = new Didww\Regions($this->getClient());
+        return $regions->getRegions($data);
     }
 
     public function getPstnRates(
