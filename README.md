@@ -2,7 +2,7 @@
 
 > Order Create
 
-```
+```php
 $didwwClient = new \Augwa\Didww(
     $apiUsername,
     $apiPassword,
@@ -23,8 +23,8 @@ print_r($result);
 
 > Output
 
-```
-stdClass Object
+```php
+Array
 (
     [result] => 0
     [country_name] => Canada

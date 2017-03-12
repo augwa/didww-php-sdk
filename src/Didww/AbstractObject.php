@@ -103,7 +103,7 @@ class AbstractObject
             )
         );
 
-        $response = $this->getClient()->__soapCall(
+        $response = (array)$this->getClient()->__soapCall(
             $method,
             $this->reOrderData($method, $data)
         );
